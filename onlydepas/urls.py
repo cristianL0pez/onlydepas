@@ -18,6 +18,10 @@ from django.contrib import admin
 from django.urls import path
 from app.views import registro_usuario,index
 from django.contrib.auth.views import LoginView, LogoutView
+from django.conf.urls.static import static
+
+from onlydepas import settings
+
 urlpatterns = [
     path('', index, name='index'),
     path('admin/', admin.site.urls),
@@ -25,3 +29,4 @@ urlpatterns = [
     path('login/', LoginView.as_view(template_name='login.html'), name='login'),
     path('logout/', LogoutView.as_view(next_page='index'), name='logout'),
 ]
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
