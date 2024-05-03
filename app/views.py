@@ -9,7 +9,8 @@ from .forms import RegistroUsuarioForm
 def index(request):
     return render(request, 'index.html')
 
-
+def listar_inmuebles(request):
+    pass
 
 def registro_usuario(request):
     if request.method == 'POST':
