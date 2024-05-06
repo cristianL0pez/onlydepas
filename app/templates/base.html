@@ -15,10 +15,16 @@
         <ul>
             <li><a href="{% url 'index' %}">Inicio</a></li>
             <li><a href="{% url 'registro_usuario' %}">Registro</a></li>
-            <!-- Agrega aquí más elementos del menú de navegación -->
+            {% if user.is_authenticated and user.usuario.tipo_usuario == 'arrendador' %}
+            <li><a href="{% url 'alta_inmueble' %}">Alta de Inmueble</a></li>
+            {% endif %}
+            {% if user.is_authenticated and user.usuario.tipo_usuario == 'arrendador' %}
+            <li><a href="{% url 'solicitudes_arrendador' %}">solicitudes de arriendo</a></li>
+            {% endif %}
+            
         </ul>
         {% if request.user.is_authenticated %}
-        <p>Bienvenido, {{ user.username }}</p> <!-- Muestra el nombre completo del usuario -->
+        <p>Bienvenido, {{ user.username }} eres un {{user.usuario.tipo_usuario}}</p> <!-- Muestra el nombre completo del usuario -->
         <a href="{% url 'logout' %}">Cerrar sesión</a> <!-- Agrega un enlace para cerrar sesión -->
         {% else %}
         <a href="{% url 'login' %}">Iniciar sesión</a> <!-- Agrega un enlace para iniciar sesión -->

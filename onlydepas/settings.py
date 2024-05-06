@@ -29,6 +29,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+LOGIN_REDIRECT_URL = 'index'
+LOGIN_URL = 'login'  # URL a la que se redirige si un usuario no está autenticado y trata de acceder a una vista protegida
+LOGOUT_URL = 'logout' 
+
 
 # Application definition
 
@@ -125,7 +129,9 @@ USE_TZ = True
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
 MEDIA_URL = "/media/"
-MEDIA_ROOT = "media"
+MEDIA_ROOT = 'media'
+
+
 
 # Extra places for collectstatic to find static files.
 STATICFILES_DIRS = (
