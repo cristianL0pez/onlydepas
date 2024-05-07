@@ -89,3 +89,6 @@ def alta_inmueble(request):
     else:
         form = InmuebleForm()
     return render(request, 'alta_inmueble.html', {'form': form})
+
+
+

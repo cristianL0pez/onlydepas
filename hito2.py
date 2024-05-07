@@ -22,3 +22,12 @@ with connection.cursor() as cursor:
 with open('inmuebles_por_comuna.txt', 'w') as archivo:
     for nombre, descripcion in resultados:
         archivo.write(f"Nombre: {nombre}\nDescripción: {descripcion}\n\n")
+        
+        
+        
+        
+        
+        
+        
+        
+        
