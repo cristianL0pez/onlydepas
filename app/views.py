@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
-from app.models import SolicitudArriendo , Inmueble, Usuario
+from app.models import SolicitudArriendo , Inmueble,Region,Comuna
 from .forms import RegistroUsuarioForm,SolicitudArriendoForm,InmuebleForm
 
 
@@ -26,6 +26,7 @@ def detalle_inmueble(request, id):
 def registro_usuario(request):
     if request.method == 'POST':
         form = RegistroUsuarioForm(request.POST)
+        print(form)
         if form.is_valid():
             usuario = form.save(commit=False)
             password = form.cleaned_data['password']
@@ -85,10 +86,38 @@ def alta_inmueble(request):
             inmueble = form.save(commit=False)
             inmueble.propietario = request.user.usuario
             inmueble.save()
-            return redirect('detalle', id=inmueble.id) 
+            return redirect('dashboard') 
     else:
         form = InmuebleForm()
     return render(request, 'alta_inmueble.html', {'form': form})
 
 
-
+@login_required
+def dashboard(request):
+    if request.user.usuario.tipo_usuario == 'arrendatario':
+        # Obtener las solicitudes del arrendatario
+        solicitudes = SolicitudArriendo.objects.filter(arrendatario=request.user.usuario)
+        
+        # Obtener todas las regiones y comunas disponibles
+        regiones = Region.objects.all()
+        comunas = Comuna.objects.all()
+        
+        # Obtener los valores seleccionados en el formulario
+        region_id = request.GET.get('region')
+        comuna_id = request.GET.get('comuna')
+        
+        # Filtrar los inmuebles por región y comuna seleccionadas
+        inmuebles = Inmueble.objects.all()
+        if region_id:
+            inmuebles = inmuebles.filter(comuna__region_id=region_id)
+        if comuna_id:
+            inmuebles = inmuebles.filter(comuna_id=comuna_id)
+        
+        return render(request, 'dashboard_arrendatario.html', {'solicitudes': solicitudes, 'regiones': regiones, 'comunas': comunas, 'inmuebles': inmuebles})
+    
+    elif request.user.usuario.tipo_usuario == 'arrendador':
+        # Obtener las solicitudes recibidas por el arrendador
+        solicitudes_recibidas = SolicitudArriendo.objects.filter(inmueble__propietario=request.user.usuario)
+        # Obtener los inmuebles del arrendador
+        inmuebles = Inmueble.objects.filter(propietario=request.user.usuario)
+        return render(request, 'dashboard_arrendador.html', {'solicitudes_recibidas': solicitudes_recibidas, 'inmuebles': inmuebles})
