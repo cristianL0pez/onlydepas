@@ -1,8 +1,10 @@
+from django.contrib import messages
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth import login, authenticate
+from django.contrib.auth.forms import UserChangeForm
 from django.contrib.auth.decorators import login_required
 from app.models import SolicitudArriendo , Inmueble,Region,Comuna
-from .forms import RegistroUsuarioForm,SolicitudArriendoForm,InmuebleForm
+from .forms import CustomUserChangeForm, RegistroUsuarioForm,SolicitudArriendoForm,InmuebleForm
 
 
 
@@ -10,7 +12,6 @@ from .forms import RegistroUsuarioForm,SolicitudArriendoForm,InmuebleForm
 
 def index(request):
     inmuebles = Inmueble.objects.all()
-    usuario = request.user
     return render(request, 'index.html',{'inmuebles': inmuebles})
 
 
@@ -121,3 +122,17 @@ def dashboard(request):
         # Obtener los inmuebles del arrendador
         inmuebles = Inmueble.objects.filter(propietario=request.user.usuario)
         return render(request, 'dashboard_arrendador.html', {'solicitudes_recibidas': solicitudes_recibidas, 'inmuebles': inmuebles})
+
+
+@login_required
+def actualizar_usuario(request):
+    if request.method == 'POST':
+        form = CustomUserChangeForm(request.POST, instance=request.user.usuario)
+        print(form)
+        if form.is_valid():
+            form.save()
+            messages.success(request, '¡Los datos del usuario han sido actualizados!')
+            return redirect('dashboard') 
+    else:
+        form = CustomUserChangeForm(instance=request.user)
+    return render(request, 'perfil.html', {'form': form})
